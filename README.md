@@ -48,7 +48,7 @@ Edges in the image are detected using the Canny Edge Detection algorithm.
 
 Rectangular contours are detected and sorted in decreasing order to identify the largest rectangles, which represent the marked options on the OMR sheets. The corner points of these rectangles are marked.
 
-### 5. Wrap Perspective: Birds Eye View Format
+### 5. Warp Perspective: Birds Eye View Format
 
 To detect the marked bubbles for each question, the non-pixel value of each bubble is obtained. The highest non-pixel value for each question is considered as the marked bubble. These indices are then compared to the actual answer key, and the results are displayed on the input image.
 
