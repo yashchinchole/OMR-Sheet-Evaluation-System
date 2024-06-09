@@ -13,7 +13,7 @@ choices = 4
 questionsBox1 = 10
 questionsBox2 = 10
 questions = [questionsBox1, questionsBox2]
-ans1 = [1, 0, 2, 3, 1, 0, 3, 1, 2, 3]
+ans1 = [0, 0, 2, 3, 1, 0, 3, 1, 2, 3]
 ans2 = [0, 1, 0, 2, 3, 0, 2, 3, 1, 1]
 ans = [ans1, ans2]
 
@@ -52,7 +52,7 @@ def find_marks(image):
 
 st.set_page_config(page_title="OMR Sheet Evaluation System", page_icon="📝", layout="centered", initial_sidebar_state="expanded")
 
-styling.apply_styling()
+style.apply_styling()
 
 st.title("📝 OMR Sheet Evaluation System")
 st.write("Upload your OMR sheet image below and click the **Calculate Marks** button to get your results.")
