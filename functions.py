@@ -3,7 +3,6 @@ from cv2 import FILLED
 import numpy as np
 import util
 
-# Constant Parameters
 widthImg = 600
 heightImg = 780
 Digit_Count = 10
@@ -19,11 +18,11 @@ def preProcess(img):
 def findContours(img, imgContours):
     contours, hierarchy = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     cv2.drawContours(imgContours, contours, -10, (255, 165, 0), 2)
-    return (contours, hierarchy)
+    return contours, hierarchy
 
 def upper(img, bottom, imgContours, questions_box_length, Choices, questions, ans, Marks_per_question):
     temp = preProcess(img)
-    (contours, hierarchy) = findContours(temp, imgContours)
+    contours, hierarchy = findContours(temp, imgContours)
     rectCon = util.rectContours(contours, 0)
 
     RollNumber = util.getCornerPoints(rectCon[0])
@@ -61,17 +60,17 @@ def upper(img, bottom, imgContours, questions_box_length, Choices, questions, an
         totalPixels = cv2.countNonZero(image)
         myPixelval[countRN][countDigit] = totalPixels
         countDigit += 1
-
-        if (countDigit == Digit_Count): countRN += 1; countDigit = 0
+        if countDigit == Digit_Count:
+            countRN += 1
+            countDigit = 0
 
     myindex = []
-    for x in range(0, RN_Digits):
+    for x in range(RN_Digits):
         arrRN = myPixelval[x]
         myIndexval = np.where(arrRN == np.amax(arrRN))
         myindex.append(myIndexval[0][0])
     print("\nRoll Number: ", myindex)
 
-    # Apply Threshhold On Subject Code Box
     SubjectCodeGray = cv2.cvtColor(imgwrapSubjectCode, cv2.COLOR_BGR2GRAY)
     imgThreshSubjectCode = cv2.threshold(SubjectCodeGray, 170, 255, cv2.THRESH_BINARY_INV)[1]
 
@@ -85,11 +84,12 @@ def upper(img, bottom, imgContours, questions_box_length, Choices, questions, an
         totalPixels = cv2.countNonZero(image)
         myPixelval[countSC][countDigit] = totalPixels
         countDigit += 1
-
-        if (countDigit == Digit_Count): countSC += 1; countDigit = 0
+        if countDigit == Digit_Count:
+            countSC += 1
+            countDigit = 0
 
     myindexnew = []
-    for x in range(0, SC_Digits):
+    for x in range(SC_Digits):
         arrSC = myPixelval[x]
         myIndexvalnew = np.where(arrSC == np.amax(arrSC))
         myindexnew.append(myIndexvalnew[0][0])
@@ -116,7 +116,7 @@ def upper(img, bottom, imgContours, questions_box_length, Choices, questions, an
     h, w, channels = final_image.shape
 
     imgRawMarks = np.zeros_like(imgMarksDisplay)
-    cv2.putText(imgRawMarks, str(int(marks_Obtained)) + "/" + str(int(marks)), (160, 90), cv2.FONT_HERSHEY_COMPLEX, 2.4, (0, 255, 25), 5, FILLED)
+    cv2.putText(imgRawMarks, str(int(marks_Obtained)) + "/" + str(int(marks)), (160, 90), cv2.FONT_HERSHEY_COMPLEX, 2.4, (255, 255, 0), 5, FILLED)
     invMatrixM = cv2.getPerspectiveTransform(ptG2, ptG1)
     imgInvMarksDisplay = cv2.warpPerspective(imgRawMarks, invMatrixM, (w, h))
 
@@ -137,9 +137,8 @@ def upper(img, bottom, imgContours, questions_box_length, Choices, questions, an
 
 def lower(img, questions_box_length, Choices, questions, ans, Marks_per_question, subject_code, roll_no, imgContours):
     temp = preProcess(img)
-    (contours, hierarchy) = findContours(temp, imgContours)
+    contours, hierarchy = findContours(temp, imgContours)
     rectContors = util.rectContours(contours, 15000)
-
     rectContors = sorted(rectContors, key=lambda x: util.reorder(util.getCornerPoints(x))[0][0][0])
 
     points = []
@@ -170,21 +169,23 @@ def lower(img, questions_box_length, Choices, questions, ans, Marks_per_question
             totalPixels = cv2.countNonZero(image)
             myPixelval[countR][countC] = totalPixels
             countC += 1
-
-            if (countC == Choices): countR += 1; countC = 0
+            if countC == Choices:
+                countR += 1
+                countC = 0
 
         myindex = []
-        for x in range(0, questions[index]):
+        for x in range(questions[index]):
             arr = myPixelval[x]
             myIndexval = np.where(arr == np.amax(arr))
             myindex.append(myIndexval[0][0])
         print(f"Answer Index Of Box {index + 1}\n", myindex)
 
         grading = []
-        for x in range(0, questions[index]):
+        for x in range(questions[index]):
             if ans[index][x] == myindex[x]:
                 grading.append(1)
-            else: grading.append(0)
+            else:
+                grading.append(0)
 
         allgrades.append(grading)
         points.append([pt1, pt2])
@@ -198,7 +199,7 @@ def lower(img, questions_box_length, Choices, questions, ans, Marks_per_question
     Correctly_Marked = sum([sum(i) for i in allgrades])
     print("\nCorrectly Marked: ", Correctly_Marked)
 
-    Wrongly_Marked = (Tot_questions - Correctly_Marked)
+    Wrongly_Marked = Tot_questions - Correctly_Marked
     print("\nWrongly Marked: ", Wrongly_Marked)
 
     marks = Marks_per_question * Tot_questions
@@ -214,15 +215,16 @@ def lower(img, questions_box_length, Choices, questions, ans, Marks_per_question
     print("\nGrade: ", Grade)
 
     h, w, channels = img.shape
-    for index,value in enumerate(warp_boxes):
+    for index, value in enumerate(warp_boxes):
         imgResult1 = value.copy()
-        imgResult1 = util.showAnswers(imgResult1,marked_answer[index],allgrades[index],ans[index],questions[index],Choices)
+        imgResult1 = util.showAnswers(imgResult1, marked_answer[index], allgrades[index], ans[index], questions[index], Choices)
 
         imgRawDrawing1 = np.zeros_like(value)
-        imgRawDrawing1 = util.showAnswers(imgRawDrawing1,marked_answer[index],allgrades[index],ans[index],questions[index],Choices)
+        imgRawDrawing1 = util.showAnswers(imgRawDrawing1, marked_answer[index], allgrades[index], ans[index], questions[index], Choices)
 
-        invmatrix1 = cv2.getPerspectiveTransform(points[index][1],points[index][0])
-        imgInvwrap1 = cv2.warpPerspective(imgRawDrawing1,invmatrix1,(w,h))
+        invmatrix1 = cv2.getPerspectiveTransform(points[index][1], points[index][0])
+        imgInvwrap1 = cv2.warpPerspective(imgRawDrawing1, invmatrix1, (w, h))
 
-        img = cv2.addWeighted(img,1,imgInvwrap1,1,0)
-    return [img,marks_Obtained,score,Grade,marks]
+        img = cv2.addWeighted(img, 1, imgInvwrap1, 1, 0)
+
+    return [img, marks_Obtained, score, Grade, marks]

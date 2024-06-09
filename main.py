@@ -1,29 +1,24 @@
-import os
-import cv2
+import streamlit as st
+from PIL import Image
 import numpy as np
-import util
+import cv2
 import functions
+import util
+import style
 
-currentDir = os.getcwd()
-imageDir = os.path.join(currentDir, "assets/Sample_OMR")
-imagePath = os.path.join(imageDir, "OMR_20_4.jpg")
-img = cv2.imread(imagePath)
 widthImg = 600
 heightImg = 780
-
 marksPerQuestion = 2
 choices = 4
-numQuestions = 20
 questionsBox1 = 10
 questionsBox2 = 10
 questions = [questionsBox1, questionsBox2]
-
 ans1 = [1, 0, 2, 3, 1, 0, 3, 1, 2, 3]
 ans2 = [0, 1, 0, 2, 3, 0, 2, 3, 1, 1]
 ans = [ans1, ans2]
 
-def findMarks():
-    img = cv2.imread(imagePath)
+def find_marks(image):
+    img = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
     img = cv2.resize(img, (widthImg, heightImg))
     imgContours = img.copy()
     imgBiggestContours = img.copy()
@@ -51,7 +46,29 @@ def findMarks():
         bottom = imgWrap[cut:, :]
 
         finalImage = functions.upper(top, bottom, imgContours, questionsBox1, choices, questions, ans, marksPerQuestion)
-        cv2.imshow('Final Image', finalImage)
-        cv2.waitKey(0)
+        return finalImage
+    else:
+        return None
 
-findMarks()
+st.set_page_config(page_title="OMR Sheet Evaluation System", page_icon="📝", layout="centered", initial_sidebar_state="expanded")
+
+styling.apply_styling()
+
+st.title("📝 OMR Sheet Evaluation System")
+st.write("Upload your OMR sheet image below and click the **Calculate Marks** button to get your results.")
+
+uploaded_file = st.file_uploader("Choose an OMR image...", type=["jpg", "jpeg", "png"])
+
+if uploaded_file is not None:
+    image = Image.open(uploaded_file)
+    st.image(image, caption='Uploaded OMR Sheet', use_column_width=True, width=300)
+
+    if st.button('Calculate Marks'):
+        with st.spinner('Processing...'):
+            final_image = find_marks(image)
+            if final_image is not None:
+                st.image(final_image, caption='Graded OMR Sheet', use_column_width=True)
+            else:
+                st.error("Could not find the OMR sheet in the image. Please upload a clearer image.")
+else:
+    st.info("Please upload an image of your OMR sheet to get started.")
