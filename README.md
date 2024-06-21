@@ -1,6 +1,6 @@
 # OMR Sheet Evaluation System
 
-![Repo Views](https://visitor-badge.laobi.icu/badge?page_id=yashchinchole/OMR-Sheet-Evaluation-System)
+![](https://visitor-badge.laobi.icu/badge?page_id=yashchinchole/OMR-Sheet-Evaluation-System)
 
 ## Description
 
@@ -65,12 +65,4 @@ To detect the marked bubbles for each question, the non-pixel value of each bubb
 
 ## Sample Example
 
-Here are some sample images demonstrating the system in action:
-
-![Sample Image 1](./assets/PPT/3.png)
-![Sample Image 2](./assets/PPT/4.png)
-![Sample Image 3](./assets/PPT/5.png)
-![Sample Image 4](./assets/PPT/6.png)
-![Sample Image 5](./assets/PPT/7.png)
-![Sample Image 5](./assets/PPT/8.png)
-![Sample Image 5](./assets/PPT/9.png)
+![OMR Example](./assets/PPT/gif.gif)
